@@ -39,10 +39,12 @@ docker pull ghcr.io/krabdo/sb-manager-bot:latest
 ## 用户流程
 
 1. 给 Bot 发送 `/bind`。
-2. 安装 [Tampermonkey 用户脚本](https://raw.githubusercontent.com/krabdo/sb-manager-bot/main/userscript/sb-manager-credentials.user.js)。
-3. 打开自己的 `https://sb.sb/u/<UID>/?tab=notifications`，点击“复制 Bot 凭据”。
+2. 推荐安装 [Chrome/Edge 凭据助手](extension/chrome/README.md)；也可使用 [Tampermonkey 用户脚本](https://raw.githubusercontent.com/krabdo/sb-manager-bot/main/userscript/sb-manager-credentials.user.js)。
+3. 打开自己的 `https://sb.sb/u/<UID>/?tab=notifications`，点击扩展中的“复制 Bot 凭据”。
 4. 立即把 `SBM1...` 粘贴到 Bot 私聊。Bot 必须先成功删除该消息，才会验证并保存绑定。
 5. 绑定成功后清除剪贴板历史。
+
+Chrome 扩展只申请 `cookies`、`activeTab`、`clipboardWrite` 和 `https://sb.sb/*` 权限；没有后台进程、内容脚本、持久化存储或网络请求代码。CI 会生成 `sb-manager-bot-chrome.zip` 安装包。
 
 Tampermonkey Beta 目前可通过 `GM.cookie`/`GM_cookie` 读取 HttpOnly Cookie。稳定版若无法读取，脚本会在本页弹窗中指导用户从浏览器 Network 面板复制完整 `Cookie` 请求头值。脚本不声明 `@connect`、不发网络请求、不记录 Cookie。凭据不会放入 Telegram deep link。
 
@@ -80,7 +82,7 @@ Tampermonkey Beta 目前可通过 `GM.cookie`/`GM_cookie` 读取 HttpOnly Cookie
 ```sh
 go test -race ./...
 go vet ./...
-node --test userscript/*.test.js
+node --test userscript/*.test.js extension/chrome/*.test.js
 ```
 
 本项目采用 Apache-2.0 许可证。第三方依赖归属见 `THIRD_PARTY_NOTICES.md`。

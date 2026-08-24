@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>sb-manager-bot 凭据助手</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <div class="brand">
+        <span class="mark" aria-hidden="true">SB</span>
+        <div>
+          <h1>凭据助手</h1>
+          <p>sb-manager-bot</p>
+        </div>
+      </div>
+
+      <section class="card">
+        <p id="status" class="status" role="status">正在检查当前页面…</p>
+        <p id="account" class="account" hidden></p>
+        <button id="copy" type="button" disabled>复制 Bot 凭据</button>
+        <button id="clear" class="secondary" type="button" disabled>清空剪贴板</button>
+      </section>
+
+      <p class="notice">凭据包含论坛登录权限。扩展不会保存或上传 Cookie；复制后请立即粘贴到 Bot 私聊，绑定成功后清空剪贴板。</p>
+    </main>
+    <script src="credential.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

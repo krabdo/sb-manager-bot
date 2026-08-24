@@ -102,7 +102,7 @@ func (c *Controller) HandleMessage(ctx context.Context, m IncomingMessage) {
 	case "/start", "/help":
 		_ = c.ui.SendText(ctx, m.ChatID, "欢迎使用 sb-manager-bot。它会保存经 AES-256-GCM 加密的 sb.sb Cookie，并把通知发回此私聊。\n\n使用 /bind 查看绑定步骤，/status 查看状态，/pause 暂停，/resume 恢复，/unbind 删除全部绑定数据。请勿把凭据发给其他人。")
 	case "/bind":
-		_ = c.ui.SendText(ctx, m.ChatID, "1. 安装 Tampermonkey 脚本：\nhttps://raw.githubusercontent.com/krabdo/sb-manager-bot/main/userscript/sb-manager-credentials.user.js\n2. 打开你自己的 sb.sb 通知页。\n3. 点击“复制 Bot 凭据”，立即粘贴到此私聊。\n\n凭据含登录 Cookie；Bot 会先删除消息，删除失败时不会保存。")
+		_ = c.ui.SendText(ctx, m.ChatID, "推荐使用 Chrome 凭据助手：\nhttps://github.com/krabdo/sb-manager-bot/tree/main/extension/chrome\n\n1. 登录并打开你自己的 sb.sb 通知页。\n2. 点击扩展中的“复制 Bot 凭据”。\n3. 立即粘贴到此私聊。\n\n备用 Tampermonkey 脚本：\nhttps://raw.githubusercontent.com/krabdo/sb-manager-bot/main/userscript/sb-manager-credentials.user.js\n\n凭据含登录 Cookie；Bot 会先删除消息，删除失败时不会保存。")
 	case "/status":
 		c.status(ctx, m.ChatID, m.TelegramID)
 	case "/pause":

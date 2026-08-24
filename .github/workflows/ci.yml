@@ -28,12 +28,23 @@ jobs:
         run: go vet ./...
       - name: Vulnerability scan
         run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
-      - name: Test userscript
-        run: node --test userscript/*.test.js
+      - name: Test browser credential helpers
+        run: node --test userscript/*.test.js extension/chrome/*.test.js
+      - name: Package Chrome extension
+        run: |
+          mkdir -p dist
+          cd extension/chrome
+          zip -q -r ../../dist/sb-manager-bot-chrome.zip manifest.json popup.html popup.css popup.js credential.js README.md
       - name: Static cross-build
         run: |
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/sb-manager-bot-amd64 ./cmd/sb-manager-bot
           CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -o dist/sb-manager-bot-arm64 ./cmd/sb-manager-bot
+      - name: Upload Chrome extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: sb-manager-bot-chrome
+          path: dist/sb-manager-bot-chrome.zip
+          if-no-files-found: error
 
   image:
     needs: test
