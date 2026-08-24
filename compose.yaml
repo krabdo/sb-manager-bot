@@ -1,0 +1,17 @@
+services:
+  sb-manager-bot:
+    image: ghcr.io/krabdo/sb-manager-bot:latest
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - sb-manager-data:/data
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "/sb-manager-bot", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  sb-manager-data:
