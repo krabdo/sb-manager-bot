@@ -102,7 +102,7 @@ func (c *Controller) HandleMessage(ctx context.Context, m IncomingMessage) {
 	case "/start", "/help":
 		_ = c.ui.SendText(ctx, m.ChatID, "欢迎使用 sb-manager-bot。它会保存经 AES-256-GCM 加密的 sb.sb Cookie，并把通知发回此私聊。\n\n使用 /bind 查看绑定步骤，/status 查看状态，/pause 暂停，/resume 恢复，/unbind 删除全部绑定数据。请勿把凭据发给其他人。")
 	case "/bind":
-		_ = c.ui.SendText(ctx, m.ChatID, "推荐使用 Chrome 凭据助手：\nhttps://github.com/krabdo/sb-manager-bot/tree/main/extension/chrome\n\n1. 登录并打开你自己的 sb.sb 通知页。\n2. 点击扩展中的“复制 Bot 凭据”。\n3. 立即粘贴到此私聊。\n\n备用 Tampermonkey 脚本：\nhttps://raw.githubusercontent.com/krabdo/sb-manager-bot/main/userscript/sb-manager-credentials.user.js\n\n凭据含登录 Cookie；Bot 会先删除消息，删除失败时不会保存。")
+		_ = c.ui.SendText(ctx, m.ChatID, "1. 下载扩展安装包：\nhttps://github.com/krabdo/sb-manager-bot/releases/download/v0.1.0/sb-manager-bot-chrome.zip\n2. 打开 chrome://extensions\n3. 开启“开发者模式”\n4. 将扩展安装包拖入浏览器窗口\n5. 登录 sb.sb 并打开自己的通知页\n6. 点击扩展图标，复制 Bot 凭据，粘贴给 Bot\n\n凭据包含论坛登录权限。Bot 会先删除凭据消息，删除失败时不会保存。绑定成功后请清空剪贴板。")
 	case "/status":
 		c.status(ctx, m.ChatID, m.TelegramID)
 	case "/pause":

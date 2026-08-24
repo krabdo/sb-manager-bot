@@ -107,6 +107,17 @@ func TestCredentialDeleteFailureDoesNotPersist(t *testing.T) {
 	}
 }
 
+func TestBindCommandShowsChromeReleaseInstructions(t *testing.T) {
+	s := testStore(t)
+	cipher, _ := NewCookieCipher(make([]byte, 32))
+	ui := &fakeUI{}
+	c := NewController(s, cipher, &fakeForum{}, ui, nil, 500, testLogger())
+	c.HandleMessage(context.Background(), IncomingMessage{TelegramID: 1, ChatID: 1, Private: true, Text: "/bind"})
+	if len(ui.texts) != 1 || !strings.Contains(ui.texts[0], "/releases/download/v0.1.0/sb-manager-bot-chrome.zip") || !strings.Contains(ui.texts[0], "chrome://extensions") || !strings.Contains(ui.texts[0], "6. 点击扩展图标") {
+		t.Fatalf("unexpected /bind instructions: %v", ui.texts)
+	}
+}
+
 func TestPollFirstLatestRestartAndFailureState(t *testing.T) {
 	s := testStore(t)
 	ctx := context.Background()
