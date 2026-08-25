@@ -57,8 +57,8 @@ func parseNotification(node *html.Node, baseURL *url.URL) (Notification, error) 
 			targetNode = findFirst(where, func(n *html.Node) bool { return n.Type == html.ElementNode && n.Data == "a" })
 		}
 	}
-	if kindNode == nil || contentNode == nil || timeNode == nil || targetNode == nil {
-		return Notification{}, errors.New("required kind, content, time, or target element is missing")
+	if kindNode == nil || contentNode == nil || timeNode == nil {
+		return Notification{}, errors.New("required kind, content, or time element is missing")
 	}
 	kind, content, actor := normalizedText(kindNode), normalizedText(contentNode), ""
 	if actorNode != nil {
@@ -71,9 +71,12 @@ func parseNotification(node *html.Node, baseURL *url.URL) (Notification, error) 
 	if err != nil {
 		return Notification{}, fmt.Errorf("invalid notification time: %w", err)
 	}
-	target, err := resolveForumURL(baseURL, attr(targetNode, "href"))
-	if err != nil {
-		return Notification{}, fmt.Errorf("invalid notification target: %w", err)
+	target := ""
+	if targetNode != nil {
+		target, err = resolveForumURL(baseURL, attr(targetNode, "href"))
+		if err != nil {
+			return Notification{}, fmt.Errorf("invalid notification target: %w", err)
+		}
 	}
 	n := Notification{Kind: kind, Actor: actor, Content: content, TargetURL: target, CreatedAt: created}
 	n.ID = notificationID(n)

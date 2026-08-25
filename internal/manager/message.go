@@ -12,7 +12,10 @@ func FormatNotification(n Notification) string {
 	if n.Actor != "" {
 		header += " · " + escapeWithinBytes(n.Actor, 256)
 	}
-	footer := "\n\n<a href=\"" + escapeWithinBytes(n.TargetURL, 1200) + "\">查看原帖</a>"
+	footer := ""
+	if n.TargetURL != "" {
+		footer = "\n\n<a href=\"" + escapeWithinBytes(n.TargetURL, 1200) + "\">查看原帖</a>"
+	}
 	budget := maxMessageBytes - len(header) - len(footer) - 2
 	return header + "\n\n" + escapeWithinBytes(n.Content, budget) + footer
 }

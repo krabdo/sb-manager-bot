@@ -12,6 +12,11 @@ const pageHead = `<html><body><a class="tab" href="/u/1777/?tab=notifications">�
 func item(kind, actor, content, target, stamp string) string {
 	return `<div class="notification-item"><span class="notification-kind">` + kind + `</span><a class="post-title">` + actor + `</a><div class="notification-content">` + content + `</div><time datetime="` + stamp + `"></time><a class="notification-reply-action" href="` + target + `">go</a></div>`
 }
+
+func itemWithoutTarget(kind, actor, content, stamp string) string {
+	return `<div class="notification-item"><span class="notification-kind">` + kind + `</span><a class="post-title">` + actor + `</a><div class="notification-content">` + content + `</div><time datetime="` + stamp + `"></time></div>`
+}
+
 func TestParserReplyMentionUnknownAndPagination(t *testing.T) {
 	base, _ := url.Parse("https://sb.sb")
 	body := pageHead + item("回复", "甲", "正文", "/t/1/?reply_id=5", "2026-01-01T00:00:00Z") + item("提及", "乙", "内容", "/t/2/?reply_id=6", "2026-01-02T00:00:00Z") + item("新类型", "", "未知", "/t/3/", "2026-01-03T00:00:00Z") + `<a href="/u/1777/page/2/?tab=notifications">next</a></body></html>`
@@ -29,6 +34,26 @@ func TestParserReplyMentionUnknownAndPagination(t *testing.T) {
 		t.Fatal("fallback hash missing")
 	}
 }
+
+func TestParserAllowsNotificationWithoutTarget(t *testing.T) {
+	base, _ := url.Parse("https://sb.sb")
+	body := pageHead + itemWithoutTarget("邀请", "甲", "无目标链接的通知", "2026-01-04T00:00:00Z") + `</body></html>`
+	p, err := ParseNotificationPage(strings.NewReader(body), base, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(p.Notifications) != 1 {
+		t.Fatalf("notifications=%d", len(p.Notifications))
+	}
+	n := p.Notifications[0]
+	if n.TargetURL != "" {
+		t.Fatalf("target=%q, want empty", n.TargetURL)
+	}
+	if !strings.HasPrefix(n.ID, "hash:") {
+		t.Fatalf("fallback ID=%q", n.ID)
+	}
+}
+
 func TestParserAuthAndStructure(t *testing.T) {
 	base, _ := url.Parse("https://sb.sb")
 	if _, e := ParseNotificationPage(strings.NewReader(`<form action="/login/"></form>`), base, 1); !errors.Is(e, ErrAuthentication) {

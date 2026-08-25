@@ -87,3 +87,17 @@ func TestMessageEscapesAndTruncatesUTF8(t *testing.T) {
 		t.Fatal("invalid UTF-8")
 	}
 }
+
+func TestMessageWithoutTargetOmitsLink(t *testing.T) {
+	n := Notification{Kind: "邀请", Actor: "a&b", Content: strings.Repeat("中文<&", 2000)}
+	got := FormatNotification(n)
+	if len(got) > maxMessageBytes {
+		t.Fatalf("message is %d bytes", len(got))
+	}
+	if strings.Contains(got, "查看原帖") || strings.Contains(got, `href=""`) {
+		t.Fatalf("unexpected target link: %s", got)
+	}
+	if !strings.Contains(got, "a&amp;b") || strings.ToValidUTF8(got, "?") != got {
+		t.Fatal("message was not safely escaped or truncated")
+	}
+}
